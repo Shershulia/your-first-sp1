@@ -131,6 +131,8 @@ export const data = [
       "3. Generate SP1 proof for n=11:",
       "   cargo run --bin prove --release -- --prove --n 11",
       "",
+      "4. Rerun the command above if you get an error (KILLED - problem sometimes appear on the Ubuntu 22.04) ",
+      "",
       "This will:",
       "- Calculate secret output",
       "- Generate a proof",
