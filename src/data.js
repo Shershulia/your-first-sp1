@@ -137,7 +137,7 @@ export const data = [
         text: "What is the final value of N squared from the output?"
       },
       {
-        text: "What is the Program VKey from the output?"
+        text: "What is the Public Values (Raw) from the output?"
       },
       {
         text: "In which file is the proof saved?"

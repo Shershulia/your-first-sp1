@@ -841,6 +841,24 @@ function App() {
                     margin: '0 auto',
                     borderRadius: '12px',
                     position: 'relative',
+                    ...(quest.id === 6 && localStorage.getItem('quest_6_completed') === 'true' && {
+                      border: '2px solid #4caf50',
+                      '&::after': {
+                        content: '"✓"',
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        backgroundColor: '#4caf50',
+                        color: 'white',
+                        fontSize: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }
+                    }),
                     ...(isQuestCompleted(quest.id) && quest.id !== 6 && {
                       border: '2px solid #4caf50',
                       '&::after': {
