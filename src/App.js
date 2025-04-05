@@ -93,6 +93,7 @@ function App() {
   const [isProving, setIsProving] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
+  const [selectedOS, setSelectedOS] = useState(localStorage.getItem('selected_os') || 'linux');
 
   useEffect(() => {
     // В реальном приложении здесь будет запрос к API для получения списка квестов
@@ -548,6 +549,39 @@ function App() {
     
     // Закрываем диалог подтверждения
     setClearDialogOpen(false);
+  };
+
+  // Add this function to filter instructions based on OS
+  const getFilteredInstructions = (instructions) => {
+    if (!instructions) return [];
+    
+    const result = [];
+    let currentOSInstructions = null;
+    
+    for (const instruction of instructions) {
+      if (instruction.startsWith('For macOS:')) {
+        currentOSInstructions = selectedOS === 'macos' ? 'macos' : null;
+        if (selectedOS === 'macos') result.push('Instructions for macOS:');
+        continue;
+      } else if (instruction.startsWith('For Linux')) {
+        currentOSInstructions = selectedOS === 'linux' ? 'linux' : null;
+        if (selectedOS === 'linux') result.push('Instructions for Linux:');
+        continue;
+      } else if (instruction.startsWith('The installation process is the same')) {
+        currentOSInstructions = 'both';
+        result.push(instruction);
+        continue;
+      } else if (instruction === '') {
+        if (currentOSInstructions) result.push(instruction);
+        continue;
+      }
+      
+      if (currentOSInstructions === selectedOS || currentOSInstructions === 'both') {
+        result.push(instruction);
+      }
+    }
+    
+    return result;
   };
 
   return (
@@ -1578,30 +1612,101 @@ function App() {
             </DialogTitle>
             <DialogContent sx={{ p: 0 }}>
               <Box sx={{ p: 3 }}>
-                <Typography 
-                  variant="subtitle1" 
-                  gutterBottom
-                  sx={{
-                    color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)',
-                    fontWeight: 500
-                  }}
-                >
-                  Instructions:
-                </Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  mb: 2 
+                }}>
+                  <Typography 
+                    variant="subtitle1"
+                    sx={{
+                      color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)',
+                      fontWeight: 500
+                    }}
+                  >
+                    Instructions:
+                  </Typography>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    gap: 1,
+                    bgcolor: isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    borderRadius: '8px',
+                    padding: '4px',
+                    border: '1px solid',
+                    borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                  }}>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        setSelectedOS('linux');
+                        localStorage.setItem('selected_os', 'linux');
+                      }}
+                      sx={{
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        textTransform: 'none',
+                        bgcolor: selectedOS === 'linux' ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : 'transparent',
+                        color: selectedOS === 'linux' ? (isDarkMode ? '#fff' : '#000') : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+                        '&:hover': {
+                          bgcolor: selectedOS === 'linux' ? (isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)')
+                        }
+                      }}
+                    >
+                      Linux
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        setSelectedOS('macos');
+                        localStorage.setItem('selected_os', 'macos');
+                      }}
+                      sx={{
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        textTransform: 'none',
+                        bgcolor: selectedOS === 'macos' ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : 'transparent',
+                        color: selectedOS === 'macos' ? (isDarkMode ? '#fff' : '#000') : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+                        '&:hover': {
+                          bgcolor: selectedOS === 'macos' ? (isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)')
+                        }
+                      }}
+                    >
+                      macOS
+                    </Button>
+                  </Box>
+                </Box>
                 <List sx={{ 
                   bgcolor: isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
                   borderRadius: 2,
                   p: 2,
                   mb: 3
                 }}>
-                  {selectedQuest?.instructions.map((instruction, index) => (
+                  {getFilteredInstructions(selectedQuest?.instructions).map((instruction, index) => (
                     <ListItem key={index} sx={{ px: 2, py: 0.5 }}>
                       <ListItemText 
                         primary={instruction}
                         primaryTypographyProps={{
                           sx: { 
                             color: isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)',
-                            fontSize: '0.95rem'
+                            fontSize: '0.95rem',
+                            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+                            ...(instruction.includes('$') && {
+                              '& .command': {
+                                color: '#69C9FF'
+                              },
+                              '& .parameter': {
+                                color: '#FF1B8D'
+                              },
+                              '& .path': {
+                                color: '#FFD700'
+                              }
+                            })
                           }
                         }}
                       />
