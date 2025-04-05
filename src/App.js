@@ -584,6 +584,13 @@ function App() {
     return result;
   };
 
+  const truncateAnswer = (answer) => {
+    if (answer.length > 5) {
+      return answer.slice(0, 5) + '...';
+    }
+    return answer;
+  };
+
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <style>{styles}</style>
@@ -1795,17 +1802,17 @@ function App() {
                                              'inherit'
                                 }}
                               >
-                                {answers[index]}
-                                    {selectedQuest.id === 6 && (
-                                      <span style={{ 
-                                        marginLeft: '8px',
-                                        color: isCorrect ? '#4caf50' : 
-                                               isWrong ? '#f44336' : 
-                                               'inherit'
-                                      }}>
-                                        {isCorrect ? '✓' : isWrong ? '×' : ''}
-                                      </span>
-                                    )}
+                                {selectedQuest.id === 6 ? truncateAnswer(answers[index]) : answers[index]}
+                                {selectedQuest.id === 6 && (
+                                  <span style={{ 
+                                    marginLeft: '8px',
+                                    color: isCorrect ? '#4caf50' : 
+                                           isWrong ? '#f44336' : 
+                                           'inherit'
+                                  }}>
+                                    {isCorrect ? '✓' : isWrong ? '×' : ''}
+                                  </span>
+                                )}
                               </Typography>
                             )}
                               </Box>
