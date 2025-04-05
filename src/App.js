@@ -584,6 +584,11 @@ function App() {
     return result;
   };
 
+  const truncateAnswer = (answer, maxLength = 5) => {
+    if (!answer) return '';
+    return answer.length <= maxLength ? answer : answer.slice(0, maxLength) + '...';
+  };
+
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <style>{styles}</style>
@@ -1749,7 +1754,10 @@ function App() {
                         '& .MuiStepIcon-root': {
                           color: isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
                           '&.Mui-active': {
-                            color: succinctColors.pink.main
+                            color: selectedQuest.id === 6 && localStorage.getItem(`quest_6_sub_${activeQuestion + 1}_correct`) === 'true' ? '#4caf50' : succinctColors.pink.main
+                          },
+                          '&.Mui-completed': {
+                            color: selectedQuest.id === 6 && localStorage.getItem(`quest_6_sub_${activeQuestion + 1}_correct`) === 'true' ? '#4caf50' : 'inherit'
                           }
                         }
                       }}
@@ -1795,17 +1803,17 @@ function App() {
                                              'inherit'
                                 }}
                               >
-                                {answers[index]}
-                                    {selectedQuest.id === 6 && (
-                                      <span style={{ 
-                                        marginLeft: '8px',
-                                        color: isCorrect ? '#4caf50' : 
-                                               isWrong ? '#f44336' : 
-                                               'inherit'
-                                      }}>
-                                        {isCorrect ? '✓' : isWrong ? '×' : ''}
-                                      </span>
-                                    )}
+                                {selectedQuest.id === 6 ? truncateAnswer(answers[index]) : answers[index]}
+                                {selectedQuest.id === 6 && (
+                                  <span style={{ 
+                                    marginLeft: '8px',
+                                    color: isCorrect ? '#4caf50' : 
+                                           isWrong ? '#f44336' : 
+                                           'inherit'
+                                  }}>
+                                    {isCorrect ? '✓' : isWrong ? '×' : ''}
+                                  </span>
+                                )}
                               </Typography>
                             )}
                               </Box>
