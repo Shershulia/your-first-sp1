@@ -73,8 +73,11 @@ export const data = [
     instructions: [
       "The installation process is the same for both macOS and Linux:",
       "",
-      "1. Install sp1up and the toolchain:",
-      "   curl -L https://sp1up.succinct.xyz | bash && sp1up",
+      "1. Download sp1up and the toolchain:",
+      "   curl -L https://sp1up.succinct.xyz | bash",
+      "",
+      "2. Install sp1up and the toolchain:",
+      "   sp1up",
       "",
       "This command will:",
       "- Install sp1up",
@@ -82,7 +85,7 @@ export const data = [
       "- Install the succinct Rust toolchain",
       "- Install the cargo prove CLI tool",
       "",
-      "2. Verify installation:",
+      "3. Verify installation:",
       "   cargo prove --version"
     ],
     question: "What output do you get when you type 'cargo prove --version' in your terminal?"
@@ -131,7 +134,7 @@ export const data = [
     ],
     questions: [
       {
-        text: "What is the final value of N from the output?"
+        text: "What is the final value of N squared from the output?"
       },
       {
         text: "What is the Program VKey from the output?"
