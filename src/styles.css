@@ -1,0 +1,75 @@
+/* Киберпанк шрифт для заголовков */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+/* Современный читаемый шрифт для текста */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.theme-transition {
+  transition: all 0.3s ease;
+}
+
+/* Градиентный фон для светлой темы */
+.light-theme {
+  background: linear-gradient(135deg, #fff5f9 0%, #fff 100%);
+}
+
+/* Градиентный фон для темной темы */
+.dark-theme {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+/* Стили для карточек */
+.quest-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.quest-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF1B8D, #69C9FF);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.quest-card:hover::before {
+  opacity: 1;
+}
+
+/* Киберпанк эффект для заголовков */
+.cyberpunk-text {
+  text-shadow: 2px 2px 0px #FF1B8D,
+               -2px -2px 0px #69C9FF;
+  letter-spacing: 1px;
+}
+
+/* Анимация для кнопок */
+.gradient-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255,27,141,0.2), rgba(105,201,255,0.2));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-button:hover::after {
+  opacity: 1;
+} 

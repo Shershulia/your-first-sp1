@@ -221,6 +221,7 @@ function App() {
         if (quest.id === 6) {
           localStorage.removeItem('quest_6_completed');
           localStorage.removeItem('quest_6_failed');
+          localStorage.removeItem('quest_6_partial');
           for (let i = 1; i <= 3; i++) {
             localStorage.removeItem(`quest_6_sub_${i}_correct`);
             localStorage.removeItem(`quest_6_sub_${i}_wrong`);
@@ -517,6 +518,9 @@ function App() {
       
       // Очищаем статусы подвопросов для квеста 6
       if (quest.id === 6) {
+        localStorage.removeItem('quest_6_completed');
+        localStorage.removeItem('quest_6_failed');
+        localStorage.removeItem('quest_6_partial');
         for (let i = 1; i <= 3; i++) {
           localStorage.removeItem(`quest_6_sub_${i}_correct`);
           localStorage.removeItem(`quest_6_sub_${i}_wrong`);
@@ -524,8 +528,12 @@ function App() {
       }
     });
     
-    // Очищаем общее количество очков
+    // Очищаем общее количество очков и дополнительные поля
     localStorage.removeItem('total_points');
+    localStorage.removeItem('verification_result');
+    localStorage.removeItem('vk');
+    localStorage.removeItem('public_values');
+    localStorage.removeItem('last_proved_points');
     
     // Обновляем состояние компонента
     setAnswers([]);
