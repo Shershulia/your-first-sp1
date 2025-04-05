@@ -1757,7 +1757,7 @@ function App() {
                             color: selectedQuest.id === 6 && localStorage.getItem(`quest_6_sub_${activeQuestion + 1}_correct`) === 'true' ? '#4caf50' : succinctColors.pink.main
                           },
                           '&.Mui-completed': {
-                            color: selectedQuest.id === 6 && localStorage.getItem(`quest_6_sub_${activeQuestion + 1}_correct`) === 'true' ? '#4caf50' : 'inherit'
+                            color: selectedQuest.id === 6 && localStorage.getItem(`quest_6_sub_${index + 1}_correct`) === 'true' ? '#4caf50' : isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
                           }
                         }
                       }}
@@ -1772,6 +1772,22 @@ function App() {
                         <Step key={index}>
                           <StepButton 
                             onClick={() => setActiveQuestion(index)}
+                            completed={isCorrect}
+                            sx={{
+                              '& .MuiStepLabel-root': {
+                                borderLeft: selectedQuest.id === 6 ? '3px solid' : 'none',
+                                borderColor: isCorrect ? '#4caf50' : 
+                                           isWrong ? '#f44336' : 
+                                           'transparent',
+                                pl: selectedQuest.id === 6 ? 1 : 0
+                              },
+                              '& .MuiStepIcon-root': {
+                                color: isCorrect ? '#4caf50' : 
+                                       isWrong ? '#f44336' : 
+                                       isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
+                              }
+                            }}
+                          >
                             completed={Boolean(answers[index])}
                               sx={{
                                 '& .MuiStepLabel-root': {
