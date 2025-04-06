@@ -400,12 +400,16 @@ function App() {
                     const nonZeroValues = [];
                     numbers.forEach((value, index) => {
                       if (value !== 0) {
-                        nonZeroValues.push(`[pos ${index}]: ${value}`);
+                        if (index === 0) {
+                          nonZeroValues.push(`Total Score: ${value}`);
+                        } else if (index === 1) {
+                          nonZeroValues.push(`Total Score Squared: ${value}`);
+                        }
                       }
                     });
 
                     return nonZeroValues.length > 0 
-                      ? `Found non-zero values: ${nonZeroValues.join(', ')}`
+                      ? nonZeroValues.join(', ')
                       : 'No non-zero values found';
                   } catch (error) {
                     console.error('Error decoding values:', error);
@@ -710,42 +714,49 @@ function App() {
                       onClick={async () => {
                         setIsProving(true);
                         try {
+                          // Temporarily disabled server request due to high load
+                          // const response = await fetch(process.env.REACT_APP_VERIFY_URL + '/generate-proof', {
+                          //   method: 'POST',
+                          //   headers: {
+                          //     'Content-Type': 'application/json',
+                          //   },
+                          //   body: JSON.stringify({ points })
+                          // });
+                          
+                          // if (!response.ok) {
+                          //   throw new Error('Network response was not ok');
+                          // }
+                          
+                          // const data = await response.json();
+                          
+                          // Mock successful response
                           const points = parseInt(localStorage.getItem('total_points')) || 0;
-                          const response = await fetch(process.env.REACT_APP_VERIFY_URL + '/generate-proof', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ points })
-                          });
                           
-                          if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                          }
+                          const pointsSquared = points * points;
+
+                          // Generate mock VK (random hash-like string)
+                          const mockVK = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
                           
-                          const data = await response.json();
+                          const pointsHex = points.toString(16).padStart(64, '0');
+                          const pointsSquaredHex = pointsSquared.toString(16).padStart(64, '0');
+                          // Combine into public values (0x prefix + 64 chars for points + 64 chars for pointsSquared)
+                          const mockPublicValues = '0x' + pointsHex + pointsSquaredHex;
                           
-                          if (data.success) {
-                            setSnackbar({
-                              open: true,
-                              message: 'Score verified successfully! Your proof is valid.',
-                              severity: 'success'
-                            });
-                            localStorage.setItem('verification_result', data.verification_result);
-                            localStorage.setItem('vk', data.vk);
-                            localStorage.setItem('public_values', data.public_values);
-                          } else {
-                            setSnackbar({
-                              open: true,
-                              message: 'Score verification failed. Please try again.',
-                              severity: 'error'
-                            });
-                          }
-                        } catch (error) {
-                          console.error('Error verifying score:', error);
                           setSnackbar({
                             open: true,
-                            message: 'Error connecting to verification server',
+                            message: 'Score verification is temporarily disabled. Your progress is saved locally.',
+                            severity: 'info'
+                          });
+                          
+                          localStorage.setItem('verification_result', 'Someone tried to overload the server, so we disabled it for now, but providing mock VK and public values. Love you all!');
+                          localStorage.setItem('vk', mockVK);
+                          localStorage.setItem('public_values', mockPublicValues);
+                          
+                        } catch (error) {
+                          console.error('Error:', error);
+                          setSnackbar({
+                            open: true,
+                            message: 'Error processing verification',
                             severity: 'error'
                           });
                         } finally {
