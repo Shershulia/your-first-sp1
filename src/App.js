@@ -94,6 +94,9 @@ function App() {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [selectedOS, setSelectedOS] = useState(localStorage.getItem('selected_os') || 'linux');
+  const [nickname, setNickname] = useState(localStorage.getItem('nickname') || '');
+  const [nicknameInput, setNicknameInput] = useState(localStorage.getItem('nickname') || '');
+  const [nicknameDialogOpen, setNicknameDialogOpen] = useState(false);
 
   useEffect(() => {
     // В реальном приложении здесь будет запрос к API для получения списка квестов
@@ -117,6 +120,13 @@ function App() {
       clearInterval(timer);
     };
   }, [isLoading, progress]);
+
+  useEffect(() => {
+    // Синхронизируем никнейм с localStorage при загрузке
+    const savedNickname = localStorage.getItem('nickname') || '';
+    setNickname(savedNickname);
+    setNicknameInput(savedNickname);
+  }, []);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -163,6 +173,11 @@ function App() {
 
   const handleSubmitAll = async () => {
     try {
+      const currentNickname = localStorage.getItem('nickname');
+      if (!currentNickname || currentNickname.trim() === '') {
+        setNicknameDialogOpen(true);
+        return;
+      }
       setIsLoading(true);
       setProgress(0);
 
@@ -201,7 +216,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ answers: allAnswers })
+        body: JSON.stringify({ username: currentNickname, answers: allAnswers })
       });
 
       if (!response.ok) {
@@ -594,6 +609,12 @@ function App() {
     }
     return answer;
   };
+  const handleNicknameChange = (e) => {
+    const newNickname = e.target.value;
+    setNicknameInput(newNickname);
+    setNickname(newNickname);
+    localStorage.setItem('nickname', newNickname);
+  };
 
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
@@ -683,8 +704,8 @@ function App() {
               </span>
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Button
                   onClick={handleRewardClick}
                   sx={{
@@ -705,7 +726,7 @@ function App() {
                     }
                   }}
                 >
-                  GetReward
+                  Get Reward
                 </Button>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   {!localStorage.getItem('vk') && (
@@ -813,7 +834,28 @@ function App() {
                   </Button>
                 </Box>
               </Box>
-
+              {/* Nickname input и Confirm */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, minWidth: 180 }}>
+                <TextField
+                  size="small"
+                  label="Nickname"
+                  variant="outlined"
+                  value={nicknameInput}
+                  onChange={handleNicknameChange}
+                  sx={{
+                    bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                    '& .MuiOutlinedInput-root': {
+                      color: 'white',
+                      borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
+                    },
+                    input: { color: 'white' }
+                  }}
+                  inputProps={{ maxLength: 32 }}
+                />
+              </Box>
               <IconButton 
                 onClick={toggleTheme} 
                 sx={{ 
@@ -2385,6 +2427,31 @@ function App() {
                 Got u lol
               </Typography>
             </Box>
+          </Dialog>
+
+          {/* Модальное окно для ввода никнейма */}
+          <Dialog open={nicknameDialogOpen} onClose={() => setNicknameDialogOpen(false)}>
+            <DialogTitle>Enter your X nick name</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="X nick name"
+                type="text"
+                fullWidth
+                value={nicknameInput}
+                onChange={handleNicknameChange}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    setNicknameDialogOpen(false);
+                  }
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setNicknameDialogOpen(false)}>Cancel</Button>
+              <Button onClick={() => setNicknameDialogOpen(false)}>Save</Button>
+            </DialogActions>
           </Dialog>
         </Container>
       </Box>
